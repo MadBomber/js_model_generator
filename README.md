@@ -1,28 +1,31 @@
 # JsModelGenerator
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/js_model_generator`. To experiment with that code, run `bin/console` for an interactive prompt.
+I found myself having to work with javascript on a node project.  YUCK!
 
-TODO: Delete this and the text above, and describe your gem
+Part of what we had to do is ingest lots of MS Excel spreadsheets into a
+postgresql database.  Everytime we got a new spreadhseet report-format we
+would have to generate a sequelize javascript model, migration, csv seed file,
+some sql and lots of chicken bone chants.
+
+This is my attempt of a labor-saving device.
 
 ## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'js_model_generator'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
 
     $ gem install js_model_generator
 
 ## Usage
 
-TODO: Write usage instructions here
+* create a config file for each XLS file to process
+* then execute
+
+```shell
+js_model_generator -c path_to_your_config_file.rb
+```
+
+## Config File Format
+
+What the heck.  I decided to use a ruby file as a config file.  See
+the sample in the example directory.
 
 ## Development
 
@@ -32,10 +35,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/js_model_generator. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/MadBomber/js_model_generator.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+You want it?  Its yours.
 
