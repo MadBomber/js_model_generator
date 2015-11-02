@@ -1,26 +1,49 @@
+############################################
+## sample_config.rb
+#
 
-JsModelGenConfig.new{ |c|
+# You may define shared converter methods
+def xyzzy(a_value)
+  "#{a_value} is now " + a_value.downcase
+end
 
-  c.file_name  = a_string     # required, supports: xls
-  c.model_title= a_string     # optional, generated from file_name
-  c.model_name = a_string     # optional, generated from model_title
+JsModelGenConfig.new do
+
+  file_name   "sample.xls"   # required, absolute or relative to this file; supports: xls
+  model_title "Sample Data"  # optional, generated from file_name
+  model_name  "sampleData"   # optional, generated from model_title
 
   # Defaults
-  c.model      = true         # all optional
-  c.migration  = true
-  c.csv        = true
-  c.csv_header = false
-  c.sql        = true
+  model       true         # all optional
+  migration   true
+  csv         true
+  csv_header  false
+  sql         true
 
-  c.transforms = {
-    "Heading Title" => {      # optional, only columns which require special attention
-      column_name: a_string,  # optional, default generated snake_case
-      column_type: a_string,  # optional, default 'string', 'date' depending on name
-      converter: Proc.new do |a_value|  # optional, default is lowercase everything
+  # optional, only columns which require special attention need a transform
+  transform "Heading Title", 
+    column_name: "a_string",          # optional, default generated snake_case
+    column_type: "a_string",          # optional, default 'string', 'date' depending on name
+    converter: Proc.new { |a_value|   # optional, default is lowercase everything
         a_value.downcase
-      end
-    }
-  }
+      }
 
-} # end of JsModelGenConfig.new{ |c|
+  transform "Heading Title Two", 
+    column_name: "a_string",          # optional, default generated snake_case
+    column_type: "a_string",          # optional, default 'string', 'date' depending on name
+    converter: Proc.new { |a_value|   # optional, default is lowercase everything
+        a_value.downcase
+      }
+
+  transform "Heading Title Three", 
+    column_name: "a_string",           # optional, default generated snake_case
+    column_type: "a_string",           # optional, default 'string', 'date' depending on name
+    converter: lambda(&method(:xyzzy)) # you may use a shared converter
+
+  transform "Heading Title Four", 
+    column_name: "a_string",           # optional, default generated snake_case
+    column_type: "a_string"            # optional, default 'string', 'date' depending on name
+
+
+end # end of JsModelGenConfig.new do
 
