@@ -9,7 +9,7 @@ def generate
 ##############################################################
 ## Generating a csv file
 
-file_name = variable_name_of(table_title, :snake_case) + '.csv'
+file_name = table_title.variablize('snake_case') + '.csv'
 csv_file  = File.open(file_name, 'w')
 
 # Header

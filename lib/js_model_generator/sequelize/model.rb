@@ -4,18 +4,20 @@ module Sequelize
 class Model
 class << self
   
-def generate
+# String ........... table_title
+# Array[Strings] ... column_names
+def generate(table_title, column_names)
 
-file_name = "#{variable_name_of(table_title, :lowerCamelCase)}.model.js"
+file_name = "#{table_title.variablize('lowerCamelCase')}.model.js"
 mod_file  = File.open(file_name,'w')
 
 mod_file.puts <<EOS
 
 // ==================================================================
-// File: $PROJ_ROOT/server/models/#{variable_name_of(table_title, :lowerCamelCase)}.model.js
+// File: $PROJ_ROOT/server/models/#{file_name}
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define("#{variable_name_of(table_title, :CamelCase)}", {
+  return sequelize.define("#{table_title.variablize('CamelCase')}", {
     id:        {type: DataTypes.INTEGER, unique: true},
     unique_id: {type: DataTypes.STRING,  unique: true},
 EOS
@@ -49,7 +51,7 @@ mod_file.puts <<EOS
     updated_at: DataTypes.DATE
   }, {
     underscored: true,
-    tableName: '#{variable_name_of(table_title, :snake_case)}',
+    tableName: '#{table_title.variablize('snake_case')}',
     indexes: [
       {fields: ['report_date']}
     ]

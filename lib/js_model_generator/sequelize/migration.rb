@@ -3,18 +3,21 @@ module Sequelize
 class Migration
 class << self
 
-def generate
+
+# String ........... table_title
+# Array[Strings] ... column_names
+def generate(table_title, column_names)
 
   # TODO: complete the method
 
 fn_prefix = DateTime.now.strftime("%Y%m%d%H%M%S")
 
-file_name = "#{fn_prefix}-create-#{variable_name_of(table_title, :snake_case).gsub('_','-')}.js"
+file_name = "#{fn_prefix}-create-#{table_title.variablize('tall-snake-case')}.js"
 mig_file  = File.open(file_name,'w')
 
 mig_file.puts <<EOS
 // =========================================================
-// == File: $PROJ_ROOT/db/migrate/#{fn_prefix}-create-#{variable_name_of(table_title, :snake_case).gsub('_','-')}.js
+// == File: $PROJ_ROOT/db/migrate/#{file_name}
 
 'use strict';
 var Promise = require('bluebird');
@@ -23,7 +26,7 @@ module.exports = {
   up: function (queryInterface, Sequelize) {
     return new Promise(function (resolve, reject) {
       queryInterface.createTable(
-        '#{variable_name_of(table_title, :snake_case)}',
+        '#{table_title.variablize('snake_case')}',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -54,7 +57,7 @@ mig_file.puts <<EOS
           updated_at: Sequelize.DATE
         })
         .then(function () {
-          queryInterface.sequelize.query("ALTER TABLE #{variable_name_of(table_title, :snake_case)} OWNER TO insighter;")
+          queryInterface.sequelize.query("ALTER TABLE #{table_title.variablize('snake_case')} OWNER TO insighter;")
             .then(resolve)
             .catch(reject);
         })
@@ -64,7 +67,7 @@ mig_file.puts <<EOS
 
   down: function (queryInterface) {
     return new Promise(function(resolve, reject) {
-      queryInterface.dropTable("#{variable_name_of(table_title, :snake_case)}")
+      queryInterface.dropTable("#{table_title.variablize('snake_case')}")
         .then(resolve)
         .catch(reject);
     });
