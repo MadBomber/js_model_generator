@@ -7,7 +7,7 @@ def xyzzy(a_value)
   "#{a_value} is now " + a_value.downcase
 end
 
-JsModelGenConfig.new do
+JsModelGenerator::Config.new do
 
   file_name   "sample.xls"   # required, absolute or relative to this file; supports: xls
 
@@ -17,6 +17,7 @@ JsModelGenConfig.new do
   model_name  "sampleData"   # optional, generated from model_title
 
   # defaults
+  # conventions supported: lowerCamelCase, CamelCase, snake_case, tall-snake-case
   file_name_convention   'lowerCamelCase'  # for the model filemame
   table_name_convention  'snake_case'
   column_name_convention 'snake_case'
@@ -68,5 +69,5 @@ JsModelGenConfig.new do
       a_value * 8.0
     }
 
-end # end of JsModelGenConfig.new do
+end # JsModelGenerator::Config.new do
 

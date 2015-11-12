@@ -1,15 +1,22 @@
 ############################################
-## js_model_gen_config.rb
+## config.rb
 ##
 ## Establish the Configuration DSL
 #
 
-class JsModelGenConfig
+require_relative 'refinements'
+
+module JsModelGenerator 
+
+class Config
+  using Refinements
+
   TRANSFORM_HASH_KEYS = {
     column_name: String,
     column_type: String,
     converter:   Proc
   }
+
 
   def initialize( &block )
     @params = {
@@ -38,6 +45,96 @@ class JsModelGenConfig
   def method_missing(method, *args, &block)
     @self_before_instance_eval.send method, *args, &block
   end
+
+
+  def file_name_convention(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      unless a_string.valid_naming_convention?
+        error "#{a_string} is not a supported naming convention #{location}"
+      else
+        @params[:file_name_convention] = a_string
+      end
+    end
+  end
+
+
+  def table_name_convention(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      unless a_string.valid_naming_convention?
+        error "#{a_string} is not a supported naming convention #{location}"
+      else
+        @params[:table_name_convention] = a_string
+      end
+    end
+  end
+
+  
+  def column_name_convention(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      unless a_string.valid_naming_convention?
+        error "#{a_string} is not a supported naming convention #{location}"
+      else
+        @params[:column_name_convention] = a_string
+      end
+    end
+  end
+
+
+  def model_filename(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      @params[:model_filename] = a_string
+    end
+  end
+
+
+  def migration_filename(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      @params[:migration_filename] = a_string
+    end
+  end
+
+
+  def sql_filename(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      @params[:sql_filename] = a_string
+    end
+  end
+
+
+  def csv_filename(a_string)
+    # TODO: i dunnot know what I was thinking
+    get_location
+    unless String == a_string.class
+      error "Expected a String #{location}"
+    else
+      @params[:csv_filename] = a_string
+    end
+  end
+
 
 
   def file_name(a_string)
@@ -163,6 +260,11 @@ class JsModelGenConfig
   end
 
 
+  def convert_naming_convention(a_string)
+    a_string.to_sym
+  end
+
+
   def get_location
     parts = caller[1].split(':')
     @location = "Near Line # #{parts[1]} in file #{parts[0]}"
@@ -179,5 +281,6 @@ class JsModelGenConfig
   end
 
 
-end # class JsModelGenConfig
+end # class Config
 
+end # module JsModelGenerator 

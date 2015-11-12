@@ -66,7 +66,7 @@ def eval_script(pathname)
   result = eval(pathname.read, proc.binding, pathname.to_s) 
 end
 
-require_relative('js_model_generator/js_model_gen_config')
+require_relative('js_model_generator/config')
 
 configatron.params = eval_script(configatron.config).params
 
