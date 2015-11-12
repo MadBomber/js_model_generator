@@ -22,7 +22,7 @@ JsModelGenConfig.new do
   column_name_convention 'snake_case'
 
   model_filename     'sampleData'         # extension .js added
-  migration_filename 'create-sample-data' # extension .js added
+  migration_filename 'create-sample-data' # extension .js added; YYYYMMDDhhmmss datetime stamp prepended
   sql_filename       'create_sample_data' # extension .sql added
   csv_filename       'sampleData'         # extension .csv added
 
