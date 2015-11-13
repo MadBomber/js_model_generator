@@ -73,6 +73,14 @@ require_relative('js_model_generator/config')
 
 configatron.params = eval_script(configatron.config).params
 
+if configatron.params[:source].nil?
+  error "The required 'source' statment for the *.xls file was not found in the config file."
+elsif configatron.params[:title].nil?
+  manufactured_title = configatron.params[:source].basename.to_s.gsub(configatron.params[:source].extname,'').titleize
+  configatron.params[:title] = manufactured_title
+  warning "No title was given; defaulting to: #{manufactured_title}"
+end
+
 abort_if_errors
 
 
@@ -115,13 +123,13 @@ def check_filename(a_string)
   param     = configatron.params[param_key]
   unless param.nil?
     if param[:filename].nil?
-      # TODO: build the filename from :model_title and convention
-      # SMELL: :model_title may not exist
-      if configatron.params[:model_title].nil?
+      # TODO: build the filename from :title and convention
+      # SMELL: :title may not exist
+      if configatron.params[:title].nil?
         error "#{a_string} requested but filename was not provided"
       else
-        model_title = configatron.params[:model_title]
-        param[:filename] = model_title.variablize(param[:convention])
+        title = configatron.params[:title]
+        param[:filename] = title.variablize(param[:convention])
         configatron.params[param_key][:filename] = extend_filename(param)
         warning "Defaulting #{a_string} filename as: #{configatron.params[param_key][:filename]}"
       end
@@ -132,7 +140,7 @@ def check_filename(a_string)
 end
 
 
-%w[ model migration sql csv ].each do |feature_request|
+JsModelGenerator::Config::FEATURES.each do |feature_request|
   check_filename(feature_request)
 end
 
@@ -149,24 +157,7 @@ end
 
 ap configatron.to_h  if verbose? || debug?
 
-stub = <<EOS
-
-
-   d888888o. 8888888 8888888888 8 8888      88 8 888888888o
- .`8888:' `88.     8 8888       8 8888      88 8 8888    `88.
- 8.`8888.   Y8     8 8888       8 8888      88 8 8888     `88
- `8.`8888.         8 8888       8 8888      88 8 8888     ,88
-  `8.`8888.        8 8888       8 8888      88 8 8888.   ,88'
-   `8.`8888.       8 8888       8 8888      88 8 8888888888
-    `8.`8888.      8 8888       8 8888      88 8 8888    `88.
-8b   `8.`8888.     8 8888       ` 8888     ,8P 8 8888      88
-`8b.  ;8.`8888     8 8888         8888   ,d8P  8 8888    ,88'
- `Y8888P ,88P'     8 8888          `Y88888P'   8 888888888P
-
-
-EOS
-
-puts stub
+puts "="*65
 
 configatron.params[:transforms].each_pair do |k,v|
   unless v[:converter].nil?
@@ -174,5 +165,9 @@ configatron.params[:transforms].each_pair do |k,v|
     puts v[:converter].call("HELLO WORLD")
   end
 end
+
+puts "="*65
+
+
 
 

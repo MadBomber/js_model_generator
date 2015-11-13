@@ -9,9 +9,9 @@ end
 
 JsModelGenerator::Config.new do
 
-  file_name   "sample.xls"   # required, absolute or relative to this file; supports: xls
+  source   "sample_data.xls"   # required, absolute or relative to this file; supports: xls
 
-  model_title "Sample Data"  # optional, generated from file_name
+  #title "Sample Data"  # optional, generated from file_name
 
   # conventions supported: lowerCamelCase, CamelCase, snake_case, tall-snake-case
 
@@ -53,7 +53,7 @@ JsModelGenerator::Config.new do
     column_name: 'day_rate',
     column_type: 'float',
     converter: Proc.new { |a_value|
-      a_value * 8.0
+      a_value.to_f * 8.0
     }
 
 end # JsModelGenerator::Config.new do

@@ -17,6 +17,8 @@ class Config
     converter:   Proc
   }
 
+  FEATURES = %w[ model migration sql csv ]
+
 
   def initialize( &block )
     @params = {
@@ -90,7 +92,7 @@ class Config
   end
 
 
-  def file_name(a_string)
+  def source(a_string)
   	get_location
   	unless String == a_string.class
       error "Expected a String #{location}"
@@ -105,19 +107,19 @@ class Config
         unless '.xls' == a_path.extname.to_s.downcase
           error "File is not of type *.xls #{location}"
         else
-          @params[:file_name] = a_path
+          @params[:source] = a_path
         end
       end
     end
   end
 
 
-  def model_title(a_string)
+  def title(a_string)
   	get_location
   	unless String == a_string.class
       error "Expected a String #{location}"
   	else
-  	  @params[:model_title] = a_string
+  	  @params[:title] = a_string
   	end
   end
 
