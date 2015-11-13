@@ -22,12 +22,10 @@ class Config
     @params = {
 	  file_name:   "",
 	  model_title: "",
-	  model_name:  "",
-	  model:       true,
-	  migration:   true,
-	  csv:         true,
-	  csv_header:  false,
-	  sql:         true,
+	  model:       {},
+	  migration:   {},
+	  csv:         {header: false},
+	  sql:         {},
 	  transforms:  {}
     }
     
@@ -92,51 +90,6 @@ class Config
   end
 
 
-  def model_filename(a_string)
-    # TODO: i dunnot know what I was thinking
-    get_location
-    unless String == a_string.class
-      error "Expected a String #{location}"
-    else
-      @params[:model_filename] = a_string
-    end
-  end
-
-
-  def migration_filename(a_string)
-    # TODO: i dunnot know what I was thinking
-    get_location
-    unless String == a_string.class
-      error "Expected a String #{location}"
-    else
-      @params[:migration_filename] = a_string
-    end
-  end
-
-
-  def sql_filename(a_string)
-    # TODO: i dunnot know what I was thinking
-    get_location
-    unless String == a_string.class
-      error "Expected a String #{location}"
-    else
-      @params[:sql_filename] = a_string
-    end
-  end
-
-
-  def csv_filename(a_string)
-    # TODO: i dunnot know what I was thinking
-    get_location
-    unless String == a_string.class
-      error "Expected a String #{location}"
-    else
-      @params[:csv_filename] = a_string
-    end
-  end
-
-
-
   def file_name(a_string)
   	get_location
   	unless String == a_string.class
@@ -169,63 +122,50 @@ class Config
   end
 
 
-  def model_name(a_string)
+  def model(options={})
   	get_location
-  	unless String == a_string.class
-      error "Expected a String #{location}"
-  	else
-  	  @params[:model_name] = a_string
-    end
+    # TODO: validate options
+    @params[:model] = {
+        # TODO: add defaults
+        convention: 'lowerCamelCase',
+        extension:  '.js'
+      }.merge(options)
   end
 
 
-  def model(a_boolean)
-  	get_location
-  	unless [TrueClass, FalseClass].include? a_boolean.class
-      error "Expected true or false #{location}"
-  	else
-      @params[:model] = a_boolean
-    end
-  end
-
-
-  def migration(a_boolean)
-  	get_location
-  	unless [TrueClass, FalseClass].include? a_boolean.class
-      error "Expected true or false #{location}"
-  	else
-      @params[:migration] = a_boolean
-    end
-  end
-
-
-  def csv(a_boolean)
-  	get_location
-  	unless [TrueClass, FalseClass].include? a_boolean.class
-      error "Expected true or false #{location}"
-  	else
-      @params[:csv] = a_boolean
-    end
-  end
-
-
-  def csv_header(a_boolean)
-  	get_location
-  	unless[TrueClass, FalseClass].include? a_boolean.class
-      error "Expected true or false #{location}"
-  	else
-      @params[:csv_header] = a_boolean
-    end
-  end
-
-
-  def sql(a_boolean)
+  def migration(options={})
     get_location
-  	unless [TrueClass, FalseClass].include? a_boolean.class
-      error "Expected true or false #{location}"
-  	else
-      @params[:sql] = a_boolean
-    end
+    # TODO: validate options
+    @params[:migration] = {
+        # TODO: add defaults
+        ts:         true,
+        prefix:     'create', 
+        convention: 'tall-snake-case',
+        extension:  '.js'
+      }.merge(options)
+  end
+
+
+  def csv(options={})
+    get_location
+    # TODO: validate options
+    @params[:csv] = {
+        # TODO: add defaults
+        convention: 'lowerCamelCase',
+        header:     false,
+        extension:  '.csv'
+      }.merge(options)
+  end
+
+
+  def sql(options={})
+    get_location
+    # TODO: validate options
+    @params[:sql] = {
+        # TODO: add defaults
+        convention: 'snake_case',
+        extension:  '.sql'
+      }.merge(options)
   end
 
 

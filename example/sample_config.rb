@@ -11,28 +11,15 @@ JsModelGenerator::Config.new do
 
   file_name   "sample.xls"   # required, absolute or relative to this file; supports: xls
 
-# TODO: reconcile model_title and model_name with the new *_filename parameters
-
   model_title "Sample Data"  # optional, generated from file_name
-  model_name  "sampleData"   # optional, generated from model_title
 
-  # defaults
   # conventions supported: lowerCamelCase, CamelCase, snake_case, tall-snake-case
-  file_name_convention   'lowerCamelCase'  # for the model filemame
-  table_name_convention  'snake_case'
-  column_name_convention 'snake_case'
 
-  model_filename     'sampleData'         # extension .js added
-  migration_filename 'create-sample-data' # extension .js added; YYYYMMDDhhmmss datetime stamp prepended
-  sql_filename       'create_sample_data' # extension .sql added
-  csv_filename       'sampleData'         # extension .csv added
-
-  # Defaults
-  model       true         # all optional
-  migration   true
-  csv         true
-  csv_header  false
-  sql         true
+             # Defaults ...........
+  model      #filename: 'sampleData',  convention: 'lowerCamelCase'
+  migration  #filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true
+  csv        #filename: 'sampleData',  convention: 'lowerCamelCase', header: false
+  sql        #filename: 'sample_data', convention: 'snake_case'
 
 
   # TODO: Need more tests on heading title and column_name uniqueness
