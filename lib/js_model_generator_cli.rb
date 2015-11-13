@@ -121,7 +121,10 @@ end # def extend_filename(a_hash)
 def check_filename(a_string)
   param_key = a_string.to_sym
   param     = configatron.params[param_key]
-  unless param.nil?
+
+  debug_me{[ :a_string, :param_key, :param ]}
+
+  if param[:generate]
     if param[:filename].nil?
       # TODO: build the filename from :title and convention
       # SMELL: :title may not exist
@@ -168,6 +171,10 @@ end
 
 puts "="*65
 
-
-
+JsModelGenerator::Config::FEATURES.each do |feature|
+  param_key = feature.to_sym
+  if configatron.params[param_key][:generate]
+    puts "Generating #{feature} ..."
+  end
+end
 

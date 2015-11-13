@@ -19,17 +19,35 @@ class Config
 
   FEATURES = %w[ model migration sql csv ]
 
+  FEATURE_DEFAULTS = {
+    model:       {
+                    generate:   false,
+                    convention: 'lowerCamelCase',
+                    extension:  '.js'
+                 },
+    migration:   {
+                    generate:   false,
+                    convention: 'tall-snake-case',
+                    extension:  '.js'
+                 },
+    csv:         {
+                    gemerate:   false,
+                    convention: 'lowerCamelCase',
+                    header:     false,
+                    extension:  '.csv'
+                 },
+    sql:         {
+                    generate:   false,
+                    convention: 'snake_case',
+                    extension:  '.sql'
+                 }
+  }
+
 
   def initialize( &block )
     @params = {
-	  file_name:   "",
-	  model_title: "",
-	  model:       {},
-	  migration:   {},
-	  csv:         {header: false},
-	  sql:         {},
-	  transforms:  {}
-    }
+	    transforms:  {}
+    }.merge FEATURE_DEFAULTS
     
     evaluate(&block) if block_given?
 
@@ -127,47 +145,32 @@ class Config
   def model(options={})
   	get_location
     # TODO: validate options
-    @params[:model] = {
-        # TODO: add defaults
-        convention: 'lowerCamelCase',
-        extension:  '.js'
-      }.merge(options)
+    @params[:model] = FEATURE_DEFAULTS[:model].merge(options)
+    @params[:model][:generate] = true
   end
 
 
   def migration(options={})
     get_location
     # TODO: validate options
-    @params[:migration] = {
-        # TODO: add defaults
-        ts:         true,
-        prefix:     'create', 
-        convention: 'tall-snake-case',
-        extension:  '.js'
-      }.merge(options)
+    @params[:migration] = FEATURE_DEFAULTS[:migration].merge(options)
+    @params[:migration][:generate] = true
   end
 
 
   def csv(options={})
     get_location
     # TODO: validate options
-    @params[:csv] = {
-        # TODO: add defaults
-        convention: 'lowerCamelCase',
-        header:     false,
-        extension:  '.csv'
-      }.merge(options)
+    @params[:csv] = FEATURE_DEFAULTS[:csv].merge(options)
+    @params[:csv][:generate] = true
   end
 
 
   def sql(options={})
     get_location
     # TODO: validate options
-    @params[:sql] = {
-        # TODO: add defaults
-        convention: 'snake_case',
-        extension:  '.sql'
-      }.merge(options)
+    @params[:sql] = FEATURE_DEFAULTS[:sql].merge(options)
+    @params[:sql][:generate] = true
   end
 
 
