@@ -1,5 +1,4 @@
 module JsModelGenerator
-module Sequelize
 class Migration
 class << self
 
@@ -85,5 +84,4 @@ end # def generate
 
 end # class << self
 end # class Migration
-end # module Sequelize
 end # module JsModelGenerator

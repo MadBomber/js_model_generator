@@ -11,10 +11,11 @@ module JsModelGenerator
 class Config
   using Refinements
 
-  TRANSFORM_HASH_KEYS = {
-    column_name: String,
-    column_type: String,
-    converter:   Proc
+  TRANSFORM_HASH_KEYS = { # array of valid value classes
+    null:        [TrueClass, FalseClass],
+    name:        [String],
+    type:        [Class],
+    converter:   [Proc]
   }
 
   FEATURES = %w[ model migration sql csv ]
@@ -191,7 +192,7 @@ class Config
           	unless valid_keys.include? a_key
               error "#{a_key} is not one of #{valid_keys.join(', ')} #{location}"
             else
-              unless TRANSFORM_HASH_KEYS[a_key] == a_hash[a_key].class
+              unless TRANSFORM_HASH_KEYS[a_key].include?(a_hash[a_key].class)
                 error "Expected type #{TRANSFORM_HASH_KEYS[a_key]} for #{a_key} value; got #{a_hash  [  a_key].class} #{location}"
               end
             end

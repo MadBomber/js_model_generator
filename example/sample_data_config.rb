@@ -4,7 +4,7 @@
 
 # You may define shared converter methods
 def xyzzy(a_value)
-  "#{a_value} is now " + a_value.downcase
+  a_value.upcase
 end
 
 JsModelGenerator::Config.new do
@@ -25,33 +25,32 @@ JsModelGenerator::Config.new do
   # TODO: Need more tests on heading title and column_name uniqueness
 
   # optional, only columns which require special attention need a transform
-  transform "Heading Title",          # case is ignored; leading/trailing spaces are ignored
+  transform "An Interger Title",      # case is ignored; leading/trailing spaces are ignored
                                       #   multiple white-space runs converted to single space
-    column_name: "a_string",          # optional, default generated snake_case
-    column_type: "a_string",          # optional, default 'string', 'date' depending on name
+    name:      "id_times_100",        # optional, default generated snake_case
+    type:      Integer,               # optional, default 'string', 'date' depending on name
+    null:      true,
     converter: Proc.new { |a_value|   # optional, default is lowercase everything
-        a_value.downcase
+        a_value.nil? ? a_value : a_value * 100
       }
 
-  transform "Heading Title Two", 
-    column_name: "a_string",          # optional, default generated snake_case
-    column_type: "a_string",          # optional, default 'string', 'date' depending on name
-    converter: Proc.new { |a_value|   # optional, default is lowercase everything
-        a_value.downcase
+  transform "store open", 
+    converter: Proc.new { |a_value|   
+        'yes' == a_value ? true : false
       }
 
-  transform "Heading Title Three", 
-    column_name: "a_string",           # optional, default generated snake_case
-    column_type: "a_string",           # optional, default 'string', 'date' depending on name
+  transform "Day of the Week", 
+    name:      "a_string",             # optional, default generated snake_case
+    type:      String,                 # optional, default 'string', 'date' depending on name
     converter: lambda(&method(:xyzzy)) # you may use a shared converter
 
   transform "Heading Title Four", 
-    column_name: "a_string",           # optional, default generated snake_case
-    column_type: "a_string"            # optional, default 'string', 'date' depending on name
+    name: "a_string",           # optional, default generated snake_case
+    type: String                # optional, default 'string', 'date' depending on name
 
-  transform 'billing rate (per hour)',
-    column_name: 'day_rate',
-    column_type: 'float',
+  transform 'billing rate',
+    name:      'day_rate',
+    type:      Float,
     converter: Proc.new { |a_value|
       a_value.to_f * 8.0
     }

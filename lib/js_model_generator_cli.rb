@@ -15,6 +15,10 @@ require 'awesome_print'
 require 'debug_me'
 include DebugMe
 
+require 'uuidtools'
+require 'spreadsheet'
+
+
 require 'cli_helper'
 include CliHelper
 
@@ -84,6 +88,23 @@ end
 abort_if_errors
 
 
+# TODO: read the source file
+
+xls_path     = configatron.params[:source]
+table_title  = configatron.params[:title]
+
+Spreadsheet.client_encoding = 'UTF-8'
+configatron.params[:book]   = Spreadsheet.open(xls_path)
+configatron.params[:sheet]  = configatron.params[:book].worksheet(0)
+
+configatron.params[:headings] = configatron.params[:sheet].first.to_a
+
+configatron.params[:column_names] = configatron.params[:headings].map do |column_heading|
+  column_heading.variablize('snake_case')
+end
+
+configatron.params[:leader_names]   = %w[ id unique_id ]
+configatron.params[:follower_names] = %w[ report_date created_at updated_at ]
 
 
 ######################################################
@@ -122,8 +143,6 @@ def check_filename(a_string)
   param_key = a_string.to_sym
   param     = configatron.params[param_key]
 
-  debug_me{[ :a_string, :param_key, :param ]}
-
   if param[:generate]
     if param[:filename].nil?
       # TODO: build the filename from :title and convention
@@ -160,21 +179,15 @@ end
 
 ap configatron.to_h  if verbose? || debug?
 
-puts "="*65
-
-configatron.params[:transforms].each_pair do |k,v|
-  unless v[:converter].nil?
-    puts "Test #{k} converter ...."
-    puts v[:converter].call("HELLO WORLD")
-  end
-end
-
-puts "="*65
+options = configatron.params.to_h
 
 JsModelGenerator::Config::FEATURES.each do |feature|
   param_key = feature.to_sym
   if configatron.params[param_key][:generate]
     puts "Generating #{feature} ..."
+    require_relative("js_model_generator/features/#{feature}")
+    Feature = eval "JsModelGenerator::#{feature.titleize}"
+    Feature.generate(options)
   end
 end
 

@@ -1,62 +1,64 @@
 module JsModelGenerator
-  module Sql
-    class Table
-      class << self
+  # Generate SQL to create the table
+  class Sql
+    using Refinements
 
-        # String ........... table_title
-        # Array[Strings] ... column_names
-        def generate(table_title, column_names)
+    class << self
+      # String ........... table_title
+      # Array[Strings] ... column_names
+      def generate(options)
+        title          = options[:title]
+        # leader_names   = options[:leader_names]
+        column_names   = options[:column_names]
+        # headings       = options[:headings]
+        # follower_names = options[:follower_names]
+        # headings       = options[:headings]
+        filename       = options[:sql][:filename]
+        # header         = options[:sql][:header]
 
+        max_size = -1
+        column_names.each { |cn| max_size = cn.size if cn.size > max_size }
 
-          # TODO: complete the method
-
-          file_name = "#{table_title.variablize('snake_case')}.sql"
-          sql_file  = File.open(file_name, 'w')
+        sql_file  = File.open(filename, 'w')
 
 sql_file.puts <<EOS
 -- ==============================================================
--- == File: #{file_name}
+-- == File: #{filename}
 
-DROP TABLE IF EXISTS #{table_title.variablize('snake_case')};
+DROP TABLE IF EXISTS #{title.variablize('snake_case')};
 
-
-SMELL: table name is hardcoded
-
-
-CREATE TABLE "public"."contingent_staffing_data" (
-"id" INTEGER DEFAULT nextval('#{table_title.variablize('snake_case')}_id_seq'::regclass) NOT NULL UNIQUE,
-"unique_id" CHARACTER VARYING( 255 ) COLLATE "pg_catalog"."default"
+CREATE TABLE "public"."#{title.variablize('snake_case')}" (
+  "id"        INTEGER DEFAULT nextval('#{title.variablize('snake_case')}_id_seq'::regclass) NOT NULL UNIQUE,
+  "unique_id" CHARACTER VARYING( 255 ) COLLATE "pg_catalog"."default"
+--
 EOS
 
-
-          column_names.each do |col_name|
-            sql_file.print "  \"#{col_name}\" "
-            if col_name.downcase.end_with?('date')
-              sql_file.print "Date"
-            else
-              sql_file.print "CHARACTER VARYING( 255 ) COLLATE \"pg_catalog\".\"default\""
-            end
-            sql_file.puts ','
+        column_names.each do |col_name|
+          spaces = " " * (max_size - col_name.size + 2)
+          sql_file.print %Q'  "#{col_name}" ' + spaces
+          if col_name.downcase.end_with?('date')
+            sql_file.print 'Date'
+          else
+            sql_file.print 'CHARACTER VARYING( 255 ) COLLATE "pg_catalog"."default"'
           end
+          sql_file.puts ','
+        end
 
 
 sql_file.puts <<EOS
-"report_date" Date,
-"created_at" Date,
-"updated_at" Date
-PRIMARY KEY ( "id" )
+--
+  "report_date" Date,
+  "created_at"  Date,
+  "updated_at"  Date
+  PRIMARY KEY ( "id" )
 );
 
 EOS
 
-          sql_file.close
+        sql_file.close
 
+      end # def generate
 
-
-
-        end # def generate
-
-      end # class << self
-    end # class Table
-  end # module Sql
+    end # class << self
+  end # class Sql
 end # module JsModelGenerator

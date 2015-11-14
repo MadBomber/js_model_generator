@@ -1,31 +1,40 @@
 module JsModelGenerator
-class CSV
-class << self
+  class Csv
+    using Refinements
+    
+    class GottaNull < Exception; end
 
-def generate
+    class << self
+
+      def generate(options)
+        table_title    = options[:title]
+        leader_names   = options[:leader_names]
+        column_names   = options[:column_names]
+        headings       = options[:headings]
+        follower_names = options[:follower_names]
+        headings       = options[:headings]
+        filename       = options[:csv][:filename]
+        header         = options[:csv][:header]
+
+        @transforms    = options[:transforms]
 
   # TODO: complete the method
   
 ##############################################################
 ## Generating a csv file
 
-file_name = table_title.variablize('snake_case') + '.csv'
-csv_file  = File.open(file_name, 'w')
+csv_file  = File.open(filename, 'w')
 
 # Header
 # SMELL: The ops-review startup seed process does not use a header row.  It
 #        gets its column order from the table_name.model.js file.
-#csv_file.puts (leader_names+column_names+follower_names).join(',')
+
+csv_file.puts (leader_names+column_names+follower_names).join(',') if header
 
 expected_columns_base   = column_names.size
-number_of_added_columns = 5 # id, unique_id, report_date, created_at, updated_at
-expected_columns    = expected_columns_base + number_of_added_columns
-
-debug_me{[  :expected_columns_base, 
-      :number_of_added_columns, 
-      :expected_columns, 
-      :column_names ]}
-
+number_of_added_columns = configatron.params[:leader_names].size +
+                          configatron.params[:follower_names].size
+expected_columns        = expected_columns_base + number_of_added_columns
 
 id = -1
 
@@ -33,19 +42,17 @@ c1 = 13 # zero-based 'N'
 c2 = 18 # 'S'
 lsize = 2
 
-sheet1.each do |row|
+options[:sheet].each do |row|
   id += 1
 
   raw_d  = row.to_a
-  debug_me{[ 'raw_d[c1]', 'raw_d[c2]' ]} if 0 == id
-  ap raw_d if 0 == id
 
   next if 0 == id
   a_line = ''
 
 
   data   = [ id, UUIDTools::UUID.random_create.to_s ] + # id and unique_id
-         transform(raw_d, column_names) +         # transformed row values
+         transform(id+1, raw_d, headings) +         # transformed row values
          ['2015-10-17', '2015-10-17', '2015-10-17']   # report_date, created_at, updated_at
 
   v1 = data[c1+lsize]
@@ -81,8 +88,7 @@ sheet1.each do |row|
 
 
   data.each do |v|
-    if v.respond_to?(:downcase)
-      v = v.chomp.gsub("\n",' ').strip.downcase.gsub('"',"'")
+    if String == v.class
       unless v.empty?
         v = "\"#{v}\""
       end
@@ -98,9 +104,64 @@ end
 
 csv_file.close
 
+abort_if_errors
 
 end # def generate
 
+
+def transform(row_number, a_value_array, a_name_array, max_string_size=255)
+  raise ArgumentError unless Array == a_value_array.class && Array == a_name_array.class
+  raise "Size mismatch: v: #{a_value_array.size} N: #{a_name_array.size}" unless a_value_array.size == a_name_array.size
+
+  a_name_array.size.times do |x|
+
+    heading = a_name_array[x]
+    value   = a_value_array[x]
+
+    transformer = @transforms[heading]
+  
+    if transformer
+      if transformer[:converter]
+        value = transformer[:converter].call(value)
+      else
+        value = default_converter(value)
+      end
+      if transformer[:type]
+        begin
+          value = cast(transformer[:type], value, transformer[:null]) 
+        rescue GottaNull
+          warning "Row: #{row_number} Col: '#{heading}' is nil."
+        end
+      end
+    else
+      value = default_converter(value)
+    end
+
+    a_value_array[x] = value
+
+  end # a_name_array.size.times do |x|
+
+  return a_value_array
+end # def transform(a_value_array, a_name_array)
+
+
+def cast(klass, value, allow_nil=true)
+  return(value) if klass == value.class
+  return(value) if allow_nil && value.nil?
+
+  raise GottaNull if value.nil?
+
+  eval("#{klass}(#{value})")
+end
+
+
+def default_converter(v)
+  if v.respond_to?(:downcase)
+    v = v.chomp.gsub("\n",' ').strip.downcase.gsub('"',"'")
+  end
+  return v
+end
+
 end # class << self
-end # class CSV
+end # class Csv
 end # module JsModelGenerator
