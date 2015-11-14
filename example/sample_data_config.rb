@@ -16,10 +16,10 @@ JsModelGenerator::Config.new do
   # conventions supported: lowerCamelCase, CamelCase, snake_case, tall-snake-case
 
              # Defaults ...........
-  #model      #filename: 'sampleData',  convention: 'lowerCamelCase'
+  model      #filename: 'sampleData',  convention: 'lowerCamelCase'
   #migration  #filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true
-  csv        #filename: 'sampleData',  convention: 'lowerCamelCase', header: false
-  sql        #filename: 'sample_data', convention: 'snake_case'
+  #csv        #filename: 'sampleData',  convention: 'lowerCamelCase', header: false
+  #sql        #filename: 'sample_data', convention: 'snake_case'
 
 
   # TODO: Need more tests on heading title and column_name uniqueness

@@ -1,22 +1,31 @@
 
 module JsModelGenerator
 class Model
+  using Refinements
+
 class << self
   
-# String ........... table_title
-# Array[Strings] ... column_names
-def generate(table_title, column_names)
+      def generate(options)
+        title          = options[:title]
+        leader_names   = options[:leader_names]
+        column_names   = options[:column_names]
+        headings       = options[:headings]
+        follower_names = options[:follower_names]
+        headings       = options[:headings]
+        filename       = options[:model][:filename]
+        header         = options[:model][:header]
 
-file_name = "#{table_title.variablize('lowerCamelCase')}.model.js"
-mod_file  = File.open(file_name,'w')
+
+
+mod_file  = File.open(filename,'w')
 
 mod_file.puts <<EOS
 
 // ==================================================================
-// File: $PROJ_ROOT/server/models/#{file_name}
+// File: $PROJ_ROOT/server/models/#{filename}
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define("#{table_title.variablize('CamelCase')}", {
+  return sequelize.define("#{title.variablize('CamelCase')}", {
     id:        {type: DataTypes.INTEGER, unique: true},
     unique_id: {type: DataTypes.STRING,  unique: true},
 EOS
@@ -37,9 +46,9 @@ EOS
 column_names.each do |col_name|
   mod_file.print "    #{col_name}: DataTypes."
   if col_name.downcase.end_with?('date')
-  	mod_file.print "DATE"
+  	mod_file.print 'DATE'
   else
-  	mod_file.print "STRING"
+  	mod_file.print 'STRING'
   end
   mod_file.puts ','
 end
@@ -50,7 +59,7 @@ mod_file.puts <<EOS
     updated_at: DataTypes.DATE
   }, {
     underscored: true,
-    tableName: '#{table_title.variablize('snake_case')}',
+    tableName: '#{title.variablize('snake_case')}',
     indexes: [
       {fields: ['report_date']}
     ]

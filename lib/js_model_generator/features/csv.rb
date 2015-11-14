@@ -7,7 +7,7 @@ module JsModelGenerator
     class << self
 
       def generate(options)
-        table_title    = options[:title]
+        title          = options[:title]
         leader_names   = options[:leader_names]
         column_names   = options[:column_names]
         headings       = options[:headings]
