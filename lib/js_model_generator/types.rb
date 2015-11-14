@@ -1,6 +1,8 @@
 # TODO: Consider wither or not the column_type value for the transorm is to be
 #       error checked or not.  If so then a file like this might be needed.
 
+# SMELL: This data structure is not used.
+
 # Nothing fancy; if necessary the user is expected to hand modify the generated files.
 module JsModelGenerator
   TYPES = {
@@ -16,4 +18,4 @@ module JsModelGenerator
   SQL_TYPES       = TYPES.map{|k,v| v[:sql]}
   MODEL_TYPES     = TYPES.map{|k,v| v[:model]}
   SEQUELIZE_TYPES = TYPES.map{|k,v| v[:migration]}
-end
+end # module JsModelGenerator

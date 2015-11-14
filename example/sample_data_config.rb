@@ -14,15 +14,23 @@ JsModelGenerator::Config.new do
   title "Sample Data"  # optional, generated from source
 
   # conventions supported: lowerCamelCase, CamelCase, snake_case, tall-snake-case
+  column_name_convention 'snake_case' # default: 'snake_case'
 
              # Defaults ...........
-  model      #filename: 'sampleData',  convention: 'lowerCamelCase'
-  migration  #filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true
-  csv        #filename: 'sampleData',  convention: 'lowerCamelCase', header: false
-  sql        #filename: 'sample_data', convention: 'snake_case'
+  model      # filename: 'sampleData',  convention: 'lowerCamelCase'
+  migration  # filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true
+  csv        # filename: 'sampleData',  convention: 'lowerCamelCase', header: false
+  sql        # filename: 'sample_data', convention: 'snake_case'
 
-
-  # TODO: Need more tests on heading title and column_name uniqueness
+  # default converter is used for every column that does not have
+  # a specific converter.  The value of the block will be the value
+  # of the value returned. This is what the default converter does:
+  # converter do |value|
+  #   if value.respond_to?(:downcase)
+  #     value = value.chomp.gsub("\n",' ').strip.downcase.gsub('"',"'")
+  #   end
+  #   return value
+  # end
 
   # optional, only columns which require special attention need a transform
   transform "An Interger Title",      # case is ignored; leading/trailing spaces are ignored
@@ -30,7 +38,7 @@ JsModelGenerator::Config.new do
     name:      "id_times_100",        # optional, default generated snake_case
     type:      Integer,               # optional, default 'string', 'date' depending on name
     null:      true,
-    converter: Proc.new { |a_value|   # optional, default is lowercase everything
+    converter: Proc.new { |a_value|   # optional, default converter is lowercase everything
         a_value.nil? ? a_value : a_value * 100
       }
 

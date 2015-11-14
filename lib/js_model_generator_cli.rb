@@ -18,7 +18,6 @@ include DebugMe
 require 'uuidtools'
 require 'spreadsheet'
 
-
 require 'cli_helper'
 include CliHelper
 
@@ -43,10 +42,6 @@ if  ARGV.empty?
   exit
 end
 
-
-# Error check you stuff; use error('some message') and warning('some message')
-
-
 if configatron.config.nil?
   error 'A config file is required.  See --help'
 else
@@ -58,9 +53,6 @@ else
   	end
   end
 end
-
-
-
 
 configatron.input_files = get_pathnames_from( configatron.arguments, '.xls')
 
@@ -108,12 +100,22 @@ configatron.params[:column_names] = configatron.params[:headings].map do |column
     # over-ride the calculated column_name
     column_name = transform[:name]
   else
-    # SMELL: column variable name convention is hard coded.
-    column_name = column_heading.variablize('snake_case')
+    column_name = column_heading.variablize(configatron.params[:column_name_convention])
   end
   column_name
 end
 
+unless configatron.params[:headings] == configatron.params[:headings].uniq
+  bad_headings = configatron.params[:headings].group_by{ |e| e }.select { |k, v| v.size > 1 }.map(&:first)
+  error "source file #{configatron.params[:headings]} has duplicate column headings: #{bad_headings.join(' | ')}"
+end
+
+unless configatron.params[:column_names] == configatron.params[:column_names].uniq
+  bad_names = configatron.params[:column_names].group_by{ |e| e }.select { |k, v| v.size > 1 }.map(&:first)
+  error "source file #{configatron.params[:source]} has duplicate column names: #{bad_names.join(' | ')}"
+end
+
+abort_if_errors
 
 configatron.params[:leader_names]   = %w[ id unique_id ]
 configatron.params[:follower_names] = %w[ report_date created_at updated_at ]

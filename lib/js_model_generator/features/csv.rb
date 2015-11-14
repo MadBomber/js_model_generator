@@ -17,8 +17,7 @@ module JsModelGenerator
         header         = options[:csv][:header]
 
         @transforms    = options[:transforms]
-
-  # TODO: complete the method
+        @converter     = options[:converter]
   
 ##############################################################
 ## Generating a csv file
@@ -124,7 +123,7 @@ def transform(row_number, a_value_array, a_name_array, max_string_size=255)
       if transformer[:converter]
         value = transformer[:converter].call(value)
       else
-        value = default_converter(value)
+        value = @converter.call(value)
       end
       if transformer[:type]
         begin
@@ -134,7 +133,7 @@ def transform(row_number, a_value_array, a_name_array, max_string_size=255)
         end
       end
     else
-      value = default_converter(value)
+      value = @converter.call(value)
     end
 
     a_value_array[x] = value
@@ -154,13 +153,14 @@ def cast(klass, value, allow_nil=true)
   eval("#{klass}(#{value})")
 end
 
-
+=begin
 def default_converter(v)
   if v.respond_to?(:downcase)
     v = v.chomp.gsub("\n",' ').strip.downcase.gsub('"',"'")
   end
   return v
 end
+=end
 
 end # class << self
 end # class Csv
