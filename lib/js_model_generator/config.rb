@@ -27,6 +27,8 @@ class Config
                     extension:  '.js'
                  },
     migration:   {
+                    ts:         true,
+                    prefix:     'create',
                     generate:   false,
                     convention: 'tall-snake-case',
                     extension:  '.js'
