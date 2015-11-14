@@ -77,6 +77,11 @@ require_relative('js_model_generator/config')
 
 configatron.params = eval_script(configatron.config).params
 
+# over-ride embedded source statement from command line
+unless configatron.input_files.empty?
+  configatron.params[:source] = configatron.input_files.shift
+end
+
 if configatron.params[:source].nil?
   error "The required 'source' statment for the *.xls file was not found in the config file."
 elsif configatron.params[:title].nil?
@@ -88,8 +93,6 @@ end
 abort_if_errors
 
 
-# TODO: read the source file
-
 xls_path     = configatron.params[:source]
 table_title  = configatron.params[:title]
 
@@ -100,8 +103,17 @@ configatron.params[:sheet]  = configatron.params[:book].worksheet(0)
 configatron.params[:headings] = configatron.params[:sheet].first.to_a
 
 configatron.params[:column_names] = configatron.params[:headings].map do |column_heading|
-  column_heading.variablize('snake_case')
+  transform = configatron.params[:transforms][column_heading]
+  if transform  &&  transform[:name]
+    # over-ride the calculated column_name
+    column_name = transform[:name]
+  else
+    # SMELL: column variable name convention is hard coded.
+    column_name = column_heading.variablize('snake_case')
+  end
+  column_name
 end
+
 
 configatron.params[:leader_names]   = %w[ id unique_id ]
 configatron.params[:follower_names] = %w[ report_date created_at updated_at ]
