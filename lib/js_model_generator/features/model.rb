@@ -4,7 +4,7 @@ class Model
   using Refinements
 
 class << self
-  
+
       def generate(options)
         title          = options[:title]
         leader_names   = options[:leader_names]
@@ -17,7 +17,7 @@ class << self
 
 
 
-mod_file  = File.open(filename,'w')
+mod_file  = File.open(filename.to_s,'w')
 
 mod_file.puts <<EOS
 

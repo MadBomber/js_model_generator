@@ -135,6 +135,29 @@ module JsModelGenerator
       end
     end
 
+    def outdir(a_string, options={})
+      get_location
+      options = {create: false}.merge options
+      unless String == a_string.class
+        error "Expected a String #{location}"
+      else
+        a_string = a_string.gsub('$','Nenv.')
+        a_string = a_string.split('/').map do |sd|
+          sd.start_with?('Nenv.') ? sd : "\"#{sd}\""
+        end.join('/')
+
+        a_path = Pathname.new( eval(a_string) )
+        `mkdir -p #{a_path}` if options[:create] && !a_path.exist?
+
+        unless a_path.exist?
+          error "Directory does not exist: #{a_path} #{location}"
+        else
+         @params[:outdir] = a_path
+       end
+      end
+
+    end
+
 
     # generate a model definition file
     def model(options={})
@@ -204,7 +227,7 @@ module JsModelGenerator
           unless Hash == a_hash.class
             error "Expected a Hash; got #{a_hash.class} #{location}"
           else
-            error_cnt  = errors.size
+            error_cnt  = configatron.errors.size
             valid_keys = TRANSFORM_HASH_KEYS.keys
             a_hash.keys.each do |a_key|
               unless valid_keys.include? a_key
@@ -215,7 +238,7 @@ module JsModelGenerator
                 end
               end
             end
-            unless errors.size > error_cnt
+            unless configatron.errors.size > error_cnt
               @params[:transforms][a_string] = a_hash
             end
           end

@@ -3,7 +3,7 @@ class Migration
   using Refinements
 
 class << self
-  
+
       def generate(options)
         title          = options[:title]
         leader_names   = options[:leader_names]
@@ -16,7 +16,7 @@ class << self
 
   # TODO: complete the method
 
-mig_file  = File.open(filename,'w')
+mig_file  = File.open(filename.to_s,'w')
 
 mig_file.puts <<EOS
 // =========================================================

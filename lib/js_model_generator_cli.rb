@@ -62,7 +62,7 @@ abort_if_errors
 
 def eval_script(pathname)
   proc = Proc.new {}
-  result = eval(pathname.read, proc.binding, pathname.to_s) 
+  result = eval(pathname.read, proc.binding, pathname.to_s)
 end
 
 require_relative('js_model_generator/config')
@@ -125,6 +125,7 @@ configatron.params[:follower_names] = %w[ report_date created_at updated_at ]
 # Local methods
 
 def extend_filename(a_hash)
+  outdir      = a_hash[:outdir]
   filename    = a_hash[:filename]
   extension   = a_hash[:extension]
   prefix      = a_hash[:prefix]
@@ -149,7 +150,17 @@ def extend_filename(a_hash)
     filename  = timestamp + sep + filename
   end
 
-  return filename
+  a_path = Pathname.new filename
+
+  if a_path.relative?
+    a_path = Pathname.new(outdir) + a_path if outdir
+  end
+
+  if configatron.params[:outdir]  &&  a_path.relative?
+    a_path = configatron.params[:outdir] + a_path
+  end
+
+  return a_path
 end # def extend_filename(a_hash)
 
 

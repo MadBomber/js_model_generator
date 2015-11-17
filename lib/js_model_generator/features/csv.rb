@@ -1,7 +1,7 @@
 module JsModelGenerator
   class Csv
     using Refinements
-    
+
     class GottaNull < Exception; end
 
     class << self
@@ -18,11 +18,11 @@ module JsModelGenerator
 
         @transforms    = options[:transforms]
         @converter     = options[:converter]
-  
+
 ##############################################################
 ## Generating a csv file
 
-csv_file  = File.open(filename, 'w')
+csv_file  = File.open(filename.to_s, 'w')
 
 # Header
 # SMELL: The ops-review startup seed process does not use a header row.  It
@@ -118,7 +118,7 @@ def transform(row_number, a_value_array, a_name_array, max_string_size=255)
     value   = a_value_array[x]
 
     transformer = @transforms[heading]
-  
+
     if transformer
       if transformer[:converter]
         value = transformer[:converter].call(value)
@@ -127,7 +127,7 @@ def transform(row_number, a_value_array, a_name_array, max_string_size=255)
       end
       if transformer[:type]
         begin
-          value = cast(transformer[:type], value, transformer[:null]) 
+          value = cast(transformer[:type], value, transformer[:null])
         rescue GottaNull
           warning "Row: #{row_number} Col: '#{heading}' is nil."
         end

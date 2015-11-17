@@ -19,7 +19,7 @@ module JsModelGenerator
         max_size = -1
         column_names.each { |cn| max_size = cn.size if cn.size > max_size }
 
-        sql_file  = File.open(filename, 'w')
+        sql_file  = File.open(filename.to_s, 'w')
 
 sql_file.puts <<EOS
 -- ==============================================================

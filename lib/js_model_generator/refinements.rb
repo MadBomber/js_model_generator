@@ -1,4 +1,4 @@
-module JsModelGenerator 
+module JsModelGenerator
 
   ACRONYMS = %w[ ops nps csc csra ].map &:upcase
 
@@ -7,7 +7,7 @@ module JsModelGenerator
   end
 
   module Refinements
-    
+
     refine String do
       VALID_NAMING_CONVENTIONS = %w[
         lowerCamelCase
@@ -15,11 +15,14 @@ module JsModelGenerator
         snake_case
         tall-snake-case
       ]
-  
+
       def valid_naming_convention?
         VALID_NAMING_CONVENTIONS.include?(self)
       end
 
+      def /(a_string)
+        self + '/' + a_string
+      end
 
       # Takes an optional convention and returns a
       # string suitable as a variable name in the convention.
@@ -43,18 +46,18 @@ module JsModelGenerator
         end
         parts = self.downcase.gsub(/[^0-9a-z ]/, ' ').squeeze(' ').split
         case convention
-          when 'lowerCamelCase' 
+          when 'lowerCamelCase'
             parts.size.times do |x|
               next unless x>0
               parts[x][0] = parts[x][0].upcase
             end
             variable_name = parts.join
-          when 'CamelCase' 
+          when 'CamelCase'
             parts.size.times do |x|
               parts[x][0] = parts[x][0].upcase
             end
-            variable_name = parts.join    
-          when 'snake_case' 
+            variable_name = parts.join
+          when 'snake_case'
             variable_name = parts.join('_')
           when 'tall-snake-case'
             variable_name = parts.join('-')

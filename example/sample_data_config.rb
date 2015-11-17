@@ -9,6 +9,13 @@ end
 
 JsModelGenerator::Config.new do
 
+  # value of putdir is scanned to replace $XXX with Nenv.XXX
+  # value of putdir is pre-pended to all relative out filenames.
+  # value of global outdir is pre-pended to all relative feature outdir
+  # if outdir does not exist AND create: is true then creat the outdir
+
+  outdir '$HOME/temp/jsmodgen_output', create: true
+
   source   "sample_data.xls"   # required, absolute or relative to this file; supports: xls
 
   title "Sample Data"  # optional, generated from source
@@ -17,10 +24,10 @@ JsModelGenerator::Config.new do
   column_name_convention 'snake_case' # default: 'snake_case'
 
              # Defaults ...........
-  model      # filename: 'sampleData',  convention: 'lowerCamelCase'
-  migration  # filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true
-  csv        # filename: 'sampleData',  convention: 'lowerCamelCase', header: false
-  sql        # filename: 'sample_data', convention: 'snake_case'
+  model      # outdir: `pwd`, filename: 'sampleData',  convention: 'lowerCamelCase'
+  migration  # outdir: `pwd`, filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true
+  csv        # outdir: `pwd`, filename: 'sampleData',  convention: 'lowerCamelCase', header: false
+  sql        # outdir: `pwd`, filename: 'sample_data', convention: 'snake_case'
 
   # default converter is used for every column that does not have
   # a specific converter.  The value of the block will be the value
@@ -42,17 +49,17 @@ JsModelGenerator::Config.new do
         a_value.nil? ? a_value : a_value * 100
       }
 
-  transform "store open", 
-    converter: Proc.new { |a_value|   
+  transform "store open",
+    converter: Proc.new { |a_value|
         'yes' == a_value ? true : false
       }
 
-  transform "Day of the Week", 
+  transform "Day of the Week",
     name:      "a_string",             # optional, default generated snake_case
     type:      String,                 # optional, default 'string', 'date' depending on name
     converter: lambda(&method(:xyzzy)) # you may use a shared converter
 
-  transform "Heading Title Four", 
+  transform "Heading Title Four",
     name: "a_string",           # optional, default generated snake_case
     type: String                # optional, default 'string', 'date' depending on name
 
