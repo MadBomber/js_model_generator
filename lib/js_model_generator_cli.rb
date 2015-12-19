@@ -65,6 +65,8 @@ def eval_script(pathname)
   result = eval(pathname.read, proc.binding, pathname.to_s)
 end
 
+require_relative('js_model_generator/types')
+
 require_relative('js_model_generator/config')
 
 configatron.params = eval_script(configatron.config).params
@@ -205,6 +207,23 @@ end
 ap configatron.to_h  if verbose? || debug?
 
 options = configatron.params.to_h
+
+# Duplicate the transforms keys so that they can be accessed
+# by either heading or column_name
+keys = options[:transforms].keys
+debug_me{[ :keys, 'options[:transforms]', 'options[:headings]', 'options[:column_names]']}
+
+unless keys.empty?
+  keys.each do |key|
+    heading_index = options[:headings].find_index key
+    debug_me{[ :key, :heading_index ]}
+    new_key = options[:column_names][heading_index]
+    options[:transforms][new_key] = options[:transforms][key]
+  end
+end
+
+debug_me{[ 'options[:transforms]', 'options[:headings]', 'options[:column_names]']}
+
 
 JsModelGenerator::Config::FEATURES.each do |feature|
   param_key = feature.to_sym

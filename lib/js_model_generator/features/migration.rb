@@ -4,6 +4,31 @@ class Migration
 
 class << self
 
+  def default_type(column_name)
+    type = 'Sequelize.'
+    if column_name.downcase.end_with?('date')
+      type += "DATE"
+    else
+      type += "STRING"
+    end
+    return type
+  end
+
+  def get_type(column_name)
+    type = @transforms[column_name]
+    unless type.nil?
+      type = type[:type].to_s.downcase
+      begin
+        type = JsModelGenerator::TYPES[type][:sequelize]
+      rescue
+        debug_me "))))) boom (((((("
+        type = nil
+      end
+    end
+    type = type.nil? ? default_type(column_name) : type
+    return type
+  end
+
       def generate(options)
         title          = options[:title]
         leader_names   = options[:leader_names]
@@ -14,9 +39,12 @@ class << self
         filename       = options[:migration][:filename]
         header         = options[:migration][:header]
 
-  # TODO: complete the method
+        @transforms    = options[:transforms]
+        @converter     = options[:converter]
 
-mig_file  = File.open(filename.to_s,'w')
+        # TODO: complete the method
+
+        mig_file  = File.open(filename.to_s,'w')
 
 mig_file.puts <<EOS
 // =========================================================
@@ -44,13 +72,7 @@ EOS
 
 
 column_names.each do |col_name|
-  mig_file.print "          #{col_name}: Sequelize."
-  if col_name.downcase.end_with?('date')
-    mig_file.print "DATE"
-  else
-    mig_file.print "STRING"
-  end
-  mig_file.puts ','
+  mig_file.puts "          #{col_name}: #{get_type(col_name)},"
 end
 
 

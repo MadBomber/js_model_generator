@@ -7,15 +7,15 @@
 module JsModelGenerator
   TYPES = {
   # valid type     converted to these
-  	'boolean'  => {sql: 'BOOLEAN', model: 'DataTypes.BOOLEAN', migration: 'Sequelize.BOOLEAN'},
-  	'date'     => {sql: 'DATE',    model: 'DataTypes.DATE',    migration: 'Sequelize.DATE'},
-  	'float'    => {sql: 'FLOAT',   model: 'DataTypes.FLOAT',   migration: 'Sequelize.FLOAT'},
-  	'integer'  => {sql: 'INTEGER', model: 'DataTypes.INTEGER', migration: 'Sequelize.INTEGER'},
-  	'string'   => {sql: 'STRING',  model: 'DataTypes.STRING',  migration: 'Sequelize.STRING'},
-  	'text'     => {sql: 'TEXT',    model: 'DataTypes.TEXT',    migration: 'Sequelize.TEXT'},
+  	'boolean'  => {sql: 'BOOLEAN', model: 'DataTypes.BOOLEAN', sequelize: 'Sequelize.BOOLEAN'},
+  	'date'     => {sql: 'DATE',    model: 'DataTypes.DATE',    sequelize: 'Sequelize.DATE'},
+  	'float'    => {sql: 'FLOAT',   model: 'DataTypes.FLOAT',   sequelize: 'Sequelize.FLOAT'},
+  	'integer'  => {sql: 'INTEGER', model: 'DataTypes.INTEGER', sequelize: 'Sequelize.INTEGER'},
+  	'string'   => {sql: 'STRING',  model: 'DataTypes.STRING',  sequelize: 'Sequelize.STRING'},
+  	'text'     => {sql: 'TEXT',    model: 'DataTypes.TEXT',    sequelize: 'Sequelize.TEXT'},
   }
 
   SQL_TYPES       = TYPES.map{|k,v| v[:sql]}
   MODEL_TYPES     = TYPES.map{|k,v| v[:model]}
-  SEQUELIZE_TYPES = TYPES.map{|k,v| v[:migration]}
+  SEQUELIZE_TYPES = TYPES.map{|k,v| v[:sequelize]}
 end # module JsModelGenerator

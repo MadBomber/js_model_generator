@@ -4,6 +4,33 @@ module JsModelGenerator
     using Refinements
 
     class << self
+
+
+  def default_type(column_name)
+    if column_name.downcase.end_with?('date')
+      type = "Date"
+    else
+      type = 'CHARACTER VARYING( 255 ) COLLATE "pg_catalog"."default"'
+    end
+    return type
+  end
+
+  def get_type(column_name)
+    type = @transforms[column_name]
+    unless type.nil?
+      type = type[:type].to_s.downcase
+      begin
+        type = JsModelGenerator::TYPES[type][:sql]
+      rescue
+        debug_me "))))) boom (((((("
+        type = nil
+      end
+    end
+    type = type.nil? ? default_type(column_name) : type
+    return type
+  end
+
+
       # String ........... table_title
       # Array[Strings] ... column_names
       def generate(options)
@@ -15,6 +42,10 @@ module JsModelGenerator
         # headings       = options[:headings]
         filename       = options[:sql][:filename]
         # header         = options[:sql][:header]
+
+        @transforms    = options[:transforms]
+        @converter     = options[:converter]
+
 
         max_size = -1
         column_names.each { |cn| max_size = cn.size if cn.size > max_size }
@@ -35,13 +66,7 @@ EOS
 
         column_names.each do |col_name|
           spaces = " " * (max_size - col_name.size + 2)
-          sql_file.print %Q'  "#{col_name}" ' + spaces
-          if col_name.downcase.end_with?('date')
-            sql_file.print 'Date'
-          else
-            sql_file.print 'CHARACTER VARYING( 255 ) COLLATE "pg_catalog"."default"'
-          end
-          sql_file.puts ','
+          sql_file.puts %Q'  "#{col_name}" ' + spaces + get_type(col_name) + ','
         end
 
 
