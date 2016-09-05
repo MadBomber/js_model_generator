@@ -4,20 +4,35 @@ module JsModelGenerator
 
     class GottaNull < Exception; end
 
+    @@add_columns = configatron.to_h[:params][:add_columns]
+
     class << self
+
+      def add_column?(column_name)
+        @@add_columns[column_name]
+      end
 
       def generate(options)
         title          = options[:title]
-        leader_names   = options[:leader_names]
         column_names   = options[:column_names]
         headings       = options[:headings]
-        follower_names = options[:follower_names]
         headings       = options[:headings]
         filename       = options[:csv][:filename]
         header         = options[:csv][:header]
 
         @transforms    = options[:transforms]
         @converter     = options[:converter]
+
+        leader_names   = options[:leader_names]
+
+        leader_names << :id         if add_column? :id
+        leader_names << :unique_id  if add_column? :unique_id
+
+        follower_names = options[:follower_names]
+        follower_names << :report_date  if add_column? :report_date
+        follower_names << :created_at   if add_column? :created_at
+        follower_names << :updated_at   if add_column? :updated_at
+
 
 ##############################################################
 ## Generating a csv file
@@ -49,10 +64,29 @@ options[:sheet].each do |row|
   next if 0 == id
   a_line = ''
 
+  data = []
 
-  data   = [ id, UUIDTools::UUID.random_create.to_s ] + # id and unique_id
-         transform(id+1, raw_d, headings) +         # transformed row values
-         ['2015-10-17', '2015-10-17', '2015-10-17']   # report_date, created_at, updated_at
+  if add_column? :id
+    data << id
+  end
+
+  if add_column? :unique_id
+    data << UUIDTools::UUID.random_create.to_s
+  end
+
+  data  += transform(id+1, raw_d, headings)        # transformed row values
+
+  if add_column? :report_date
+    data << '2015-10-17'
+  end
+
+  if add_column? :created_at
+    data << '2015-10-17'
+  end
+
+  if add_column? :updated_at
+    data << '2015-10-17'
+  end
 
   v1 = data[c1+lsize]
   v2 = data[c2+lsize]
@@ -65,24 +99,6 @@ options[:sheet].each do |row|
   if data.size > expected_columns
     debug_me('ERROR'){[ :id, 'data.size' ]}
   end
-
-  if 1100 == data.first
-    field = data[expected_columns-3]
-    field_size = field.size
-    the_last_character = field[field_size-1,1]
-    debug_me{[ :field, :field_size, :the_last_character,
-      'the_last_character.size',
-      'the_last_character.ord'
-     ]}
-  v1 = data[c1+lsize]
-  v2 = data[c2+lsize]
-  #unless v1 == v2
-    debug_me{[ :id, :v1, :v2 ]}
-  #end
-
-  end
-
-
 
 
 

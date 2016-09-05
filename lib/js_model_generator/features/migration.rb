@@ -6,7 +6,9 @@ class << self
 
   def default_type(column_name)
     type = 'Sequelize.'
-    if column_name.downcase.end_with?('date')
+    lc_column_name = column_name.downcase
+    if lc_column_name.end_with?('date') ||
+       lc_column_name.start_with?('date')
       type += "DATE"
     else
       type += "STRING"

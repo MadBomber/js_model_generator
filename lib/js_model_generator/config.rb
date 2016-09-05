@@ -19,6 +19,12 @@ module JsModelGenerator
     }
 
     FEATURE_DEFAULTS = {
+      add_columns: {
+        id:         false,  # sequential integer
+        unique_id:  false,  # uuid
+        created_at: false,  # date
+        updated_at: false   # date
+      },
       model:       {
         generate:   false,
         convention: 'lowerCamelCase',
@@ -158,6 +164,13 @@ module JsModelGenerator
 
     end
 
+
+    # add additional columns not found in the spreadsheet
+    def add_columns(*new_columns)
+      options = Hash.new
+      new_columns.each {|c| options[c] = true}
+      @params[:add_columns] = FEATURE_DEFAULTS[:add_columns].merge(options)
+    end
 
     # generate a model definition file
     def model(options={})

@@ -1,5 +1,12 @@
 # JsModelGenerator
 
+This thing is in major churn mode.  Don't use it without adult supervision.
+
+Its overall purpose seems to be morphing into some thing that handles the
+generic task of extract/transform/load for spreadsheet files into databases.
+Don't know if the migrations part of its nature will survive.
+
+
 I found myself having to work with javascript on a node project.  YUCK!
 
 Part of what we had to do is ingest lots of MS Excel spreadsheets into a

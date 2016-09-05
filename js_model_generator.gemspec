@@ -6,7 +6,7 @@ require 'awesome_print'
 
 Gem::Specification.new do |spec|
   spec.name          = "js_model_generator"
-  spec.version       = '0.0.1'
+  spec.version       = '0.0.3'
   spec.authors       = ["Dewayne VanHoozer"]
   spec.email         = ["dvanhoozer@gmail.com"]
 

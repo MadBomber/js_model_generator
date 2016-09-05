@@ -23,6 +23,9 @@ JsModelGenerator::Config.new do
   # conventions supported: lowerCamelCase, CamelCase, snake_case, tall-snake-case
   column_name_convention 'snake_case' # default: 'snake_case'
 
+
+  add_columns :id, :unique_id, :report_date, :created_at, :updated_at
+
              # Defaults ...........
   model      # outdir: `pwd`, filename: 'sampleData',  convention: 'lowerCamelCase'
   migration  # outdir: `pwd`, filename: 'sample-data', convention: 'tall-snake-case', prefix: 'create', ts: true

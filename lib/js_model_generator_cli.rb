@@ -119,8 +119,8 @@ end
 
 abort_if_errors
 
-configatron.params[:leader_names]   = %w[ id unique_id ]
-configatron.params[:follower_names] = %w[ report_date created_at updated_at ]
+configatron.params[:leader_names]   = [] # %w[ id unique_id ]
+configatron.params[:follower_names] = [] # %w[ report_date created_at updated_at ]
 
 
 ######################################################
