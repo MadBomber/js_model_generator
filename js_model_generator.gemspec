@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Generates some Javascript code for sequelize models, migrations and sql and csv files from an XLS spreadsheet.}
   spec.description   = %q{Generates some Javascript code for sequelize models, migrations and sql and csv files from an XLS spreadsheet.}
   spec.homepage      = "http://github.com/MadBomber/js_model_generater"
+  spec.required_ruby_version = ">= 4.0"
   spec.license       = "You want it?  Its yours."
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
